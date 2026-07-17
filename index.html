@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utsav B K | Computer Science Student & Full Stack Developer</title>
+    <meta name="description" content="Portfolio of Utsav B K, Computer Science student at Howard University, Founder of SATitide, and developer specializing in Full Stack web applications and Robotics.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+    <div class="custom-cursor-dot" id="custom-cursor-dot"></div>
+
+    <!-- Header Navigation -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-accent">&lt;</span>Utsav<span class="logo-accent">.Dev /&gt;</span>
+            </a>
+            
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="#hero" class="nav-link active">Home</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#education" class="nav-link">Education</a></li>
+                    <li><a href="#projects" class="nav-link">Projects</a></li>
+                    <li><a href="#experience" class="nav-link">Experience</a></li>
+                    <li><a href="#awards" class="nav-link">Awards</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <!-- Color Theme Customizer dots -->
+                <div class="accent-picker" id="accent-picker" title="Pick a cozy accent color!">
+                    <button class="color-dot dot-terracotta active" data-accent="#e07a5f" data-accent-glow="rgba(224, 122, 95, 0.4)" aria-label="Terracotta Theme"></button>
+                    <button class="color-dot dot-sage" data-accent="#81b29a" data-accent-glow="rgba(129, 178, 154, 0.4)" aria-label="Sage Theme"></button>
+                    <button class="color-dot dot-harvest" data-accent="#f2cc8f" data-accent-glow="rgba(242, 204, 143, 0.4)" aria-label="Harvest Theme"></button>
+                    <button class="color-dot dot-denim" data-accent="#98c1d9" data-accent-glow="rgba(152, 193, 217, 0.4)" aria-label="Denim Theme"></button>
+                </div>
+                
+                <!-- 3D Toggle switch -->
+                <button class="theme-toggle-switch" id="theme-toggle" aria-label="Toggle dark/light theme">
+                    <span class="switch-thumb">
+                        <i class="fa-solid fa-moon icon-dark"></i>
+                        <i class="fa-solid fa-sun icon-light"></i>
+                    </span>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <!-- Reactive Particle Canvas background -->
+            <canvas id="hero-canvas" class="hero-canvas"></canvas>
+            
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-tagline">Hey there, welcome! I'm Utsav.</div>
+                    <h1 class="hero-title">
+                        I am <span class="text-glow">Utsav B K</span>
+                    </h1>
+                    <h2 class="hero-subtitle">
+                        And I'm a <span class="typing-text" id="typing-text"></span><span class="typed-cursor">|</span>
+                    </h2>
+                    <p class="hero-description">
+                        Building full-stack AI web platforms serving 50,000+ students, exploring robotics, and trying to make coding a bit more helpful for everyone.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary hover-effect">
+                            <span>See what I've built</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary hover-effect">
+                            <span>Let's chat!</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="avatar-wrapper" id="avatar-wrapper" title="Click me for a surprise!">
+                        <!-- Interactive speech bubble floating above avatar -->
+                        <div class="avatar-speech-bubble" id="avatar-bubble">Hey there! 👋 Click me!</div>
+                        
+                        <canvas id="avatar-canvas" class="avatar-canvas" width="360" height="430" aria-label="Interactive mathematical portrait"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <a href="#about" aria-label="Scroll down">
+                    <span class="mouse">
+                        <span class="wheel"></span>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Who I Am</span>
+                    <h2 class="section-title">A bit about my journey</h2>
+                    <div class="section-line"></div>
+                </div>
+                
+                <div class="about-grid">
+                    <div class="about-text-content">
+                        <h3>Bridging the gap between software and hardware to make useful, community-driven things.</h3>
+                        <p>
+                            I'm a Computer Science student at Howard University in Washington, DC, studying on a full merit-based academic scholarship. 
+                        </p>
+                        <p>
+                            Before moving to DC, I studied A-Levels at Budhanilkantha School in Nepal. I've spent the past few years tinkering with full-stack web applications, coding adaptive AI tutoring models, and building actual physical robots. I care deeply about education, tech access, and clean neighborhoods.
+                        </p>
+                        <div class="about-stats">
+                            <div class="stat-card">
+                                <span class="stat-number">
+                                    1590
+                                    <span class="handwritten-note note-sat">yes, it was intense! ✍️</span>
+                                </span>
+                                <span class="stat-label">SAT Score</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">50K+</span>
+                                <span class="stat-label">SATitide Students served</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">
+                                    3.90
+                                    <span class="handwritten-note note-see">phew! 😅</span>
+                                </span>
+                                <span class="stat-label">SEE GPA</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-details-card">
+                        <div class="glass-card details-card-content">
+                            <h3>Quick Profile</h3>
+                            <ul class="info-list">
+                                <li>
+                                    <span class="info-key"><i class="fa-solid fa-graduation-cap"></i> School:</span>
+                                    <span class="info-value">Howard University</span>
+                                </li>
+                                <li>
+                                    <span class="info-key"><i class="fa-solid fa-envelope"></i> Email:</span>
+                                    <span class="info-value">utsavbk9022@gmail.com</span>
+                                </li>
+                                <li>
+                                    <span class="info-key"><i class="fa-solid fa-location-dot"></i> Based in:</span>
+                                    <span class="info-value">Washington, DC</span>
+                                </li>
+                                <li>
+                                    <span class="info-key"><i class="fa-solid fa-briefcase"></i> Current Status:</span>
+                                    <span class="info-value text-status">Open for research &amp; coding</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="education-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Classroom Stuff</span>
+                    <h2 class="section-title">My educational path</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="education-timeline">
+                    <!-- Howard University -->
+                    <div class="education-card glass-card">
+                        <div class="education-meta">
+                            <span class="edu-date">Jul, 2026 - Present</span>
+                            <span class="edu-location"><i class="fa-solid fa-location-dot"></i> Washington, DC</span>
+                        </div>
+                        <div class="education-title-row">
+                            <i class="fa-solid fa-university edu-icon"></i>
+                            <div>
+                                <h3>Howard University</h3>
+                                <h4>Bachelor in Computer Science</h4>
+                            </div>
+                        </div>
+                        <p class="edu-desc">
+                            Studying CS on a competitive, full merit-based scholarship awarded for academic performance and leadership potential.
+                        </p>
+                    </div>
+
+                    <!-- Budhanilkantha School -->
+                    <div class="education-card glass-card">
+                        <div class="education-meta">
+                            <span class="edu-date">Jun, 2023 - Jun, 2025</span>
+                            <span class="edu-location"><i class="fa-solid fa-location-dot"></i> Kathmandu, Nepal</span>
+                        </div>
+                        <div class="education-title-row">
+                            <i class="fa-solid fa-school edu-icon"></i>
+                            <div>
+                                <h3>Budhanilkantha School</h3>
+                                <h4>Cambridge International A-Levels</h4>
+                                <span class="handwritten-note note-school">Loved this place! ❤️</span>
+                            </div>
+                        </div>
+                        <div class="grades-grid">
+                            <div class="grade-badge">Physics: <strong>A* (90)</strong></div>
+                            <div class="grade-badge">Chemistry: <strong>A (89)</strong></div>
+                            <div class="grade-badge">Mathematics: <strong>A (88)</strong></div>
+                            <div class="grade-badge">Biology: <strong>A (85)</strong></div>
+                            <div class="grade-badge">General Paper: <strong>a (81)</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- SEE -->
+                    <div class="education-card glass-card">
+                        <div class="education-meta">
+                            <span class="edu-date">Graduated 2023</span>
+                            <span class="edu-location"><i class="fa-solid fa-location-dot"></i> Butwal, Nepal</span>
+                        </div>
+                        <div class="education-title-row">
+                            <i class="fa-solid fa-award edu-icon"></i>
+                            <div>
+                                <h3>Everest English Boarding Secondary School</h3>
+                                <h4>Secondary Education Examination (SEE)</h4>
+                            </div>
+                        </div>
+                        <p class="edu-desc">
+                            Completed Secondary Education Examination with an outstanding GPA of <strong>3.90 / 4.00</strong>. Honored as the Class Topper.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="projects-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Things I've Built</span>
+                    <h2 class="section-title">Selected Projects</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <!-- Projects Filter Control -->
+                <div class="projects-filter">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="fullstack">Web / AI</button>
+                    <button class="filter-btn" data-filter="robotics">Robotics</button>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid" id="projects-grid">
+                    <!-- Project 1: SATitide -->
+                    <div class="project-card" data-category="fullstack">
+                        <div class="project-img-wrapper">
+                            <img src="assets/project1.jpg" alt="SATitide Dashboard" class="project-img">
+                            <div class="project-overlay">
+                                <div class="overlay-buttons">
+                                    <a href="https://satitude.xyz" target="_blank" class="overlay-btn" aria-label="View live site"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                                    <a href="#" class="overlay-btn" aria-label="View source code"><i class="fa-brands fa-github"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <div class="project-category">Full Stack &amp; AI</div>
+                            <h3 class="project-title">SATitide.xyz</h3>
+                            <p class="project-desc">Founder &amp; Developer. Architected an AI-powered test prep platform serving 50,000+ students. Integrated adaptive tutoring and performance analytics for study paths.</p>
+                            <div class="project-tags">
+                                <span>React</span>
+                                <span>FastAPI</span>
+                                <span>AI Tutor</span>
+                                <span>Analytics Engine</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Hexapod -->
+                    <div class="project-card" data-category="robotics">
+                        <div class="project-img-wrapper">
+                            <img src="assets/project2.jpg" alt="Hexapod Robot" class="project-img">
+                            <div class="project-overlay">
+                                <div class="overlay-buttons">
+                                    <a href="#" class="overlay-btn" aria-label="View demo video"><i class="fa-solid fa-play"></i></a>
+                                    <a href="#" class="overlay-btn" aria-label="View CAD files"><i class="fa-solid fa-cube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <div class="project-category">Robotics / Hardware</div>
+                            <h3 class="project-title">
+                                Autonomous Hexapod
+                                <span class="handwritten-note note-project">it actually walks! 🕷️</span>
+                            </h3>
+                            <p class="project-desc">Designed and built a fully functional six-legged robot at the Budhanilkantha School Makerspace. Created all 3D mechanical components and motion kinematics.</p>
+                            <div class="project-tags">
+                                <span>3D Modeling</span>
+                                <span>Blender</span>
+                                <span>Kinematics</span>
+                                <span>Arduino / C++</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="experience-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">What I've Been Up To</span>
+                    <h2 class="section-title">Work &amp; Leadership</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="timeline">
+                    <!-- Tutor Merosiksha -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Aug, 2025 - Present</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Academic Tutor</h3>
+                            <h4>Merosiksha (One of Nepal's largest online learning platforms)</h4>
+                            <p>Delivering comprehensive, high-quality video and live instruction in Physics, Chemistry, Mathematics, and Biology to strengthen students' conceptual understanding.</p>
+                        </div>
+                    </div>
+
+                    <!-- Environment Club -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Feb, 2024 - Feb, 2025</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Vice-President</h3>
+                            <h4>Budhanilkantha School Environment Club</h4>
+                            <p>Directed a year-long environmental initiative involving 1,100+ students. Conducted interactive learning workshops and actions in partnership with Kathmandu's District Forest Office (DFO).</p>
+                        </div>
+                    </div>
+
+                    <!-- NAVIGO NEPAL -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2025</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Lead Program Volunteer</h3>
+                            <h4>NAVIGO NEPAL "What's Next Program"</h4>
+                            <p>Educated 500+ post-high school students in Kathmandu about college selection, national/international olympiads, and standardized test prep pathways.</p>
+                        </div>
+                    </div>
+
+                    <!-- Guidelight Nepal -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2024</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Mathematics Team Researcher</h3>
+                            <h4>Guidelight Nepal</h4>
+                            <p>Investigated functional mathematical transformations using non-linear parameter estimations. Collaborated inside a selective 7-person research team mentored by academics from Cornell and University of Bristol.</p>
+                        </div>
+                    </div>
+
+                    <!-- Budhanilkantha Cleanup -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2023 - 2025</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Co-Founder &amp; Coordinator</h3>
+                            <h4>
+                                Swachha Budhanilkantha Abhiyan
+                                <span class="handwritten-note note-cleanup">student-run cleanup! 🧹</span>
+                            </h4>
+                            <p>Co-founded a student-led cleanup campaign. Organized 42 volunteers for weekly cleanup operations, successfully removing approximately 25 lbs of municipal waste every week.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tech Manager Shop -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2021 - Present</div>
+                        <div class="glass-card timeline-content">
+                            <h3>Technology &amp; Ad Manager</h3>
+                            <h4>Bhuvan Kalika Sunchadi Pasal</h4>
+                            <p>Manages technical operations, bookkeeping systems, and automated inventories for our family-owned jewelry business. Executed marketing campaigns on TikTok &amp; Instagram.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Awards Section -->
+        <section id="awards" class="awards-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Shining Moments</span>
+                    <h2 class="section-title">Honors &amp; Awards</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="awards-grid">
+                    <!-- Morgan Award -->
+                    <div class="glass-card award-card">
+                        <div class="award-header">
+                            <i class="fa-solid fa-trophy award-gold-icon"></i>
+                            <span class="award-year">2025</span>
+                        </div>
+                        <h3>
+                            Morgan Award
+                            <span class="handwritten-note note-award">biology topper! 🧬</span>
+                        </h3>
+                        <h4 class="award-institution">Budhanilkantha School | Kathmandu</h4>
+                        <p>Awarded a €6,000 cash prize for earning the highest grade in Cambridge International A-Level Biology (9700) within the school cohort, ranking first on the external standardized exams.</p>
+                    </div>
+
+                    <!-- Nature Photo -->
+                    <div class="glass-card award-card">
+                        <div class="award-header">
+                            <i class="fa-solid fa-camera award-silver-icon"></i>
+                            <span class="award-year">2023</span>
+                        </div>
+                        <h3>Runner-up (Nature Photography)</h3>
+                        <h4 class="award-institution">Wildlife Conservation Nepal (WCN)</h4>
+                        <p>Placed second in the national nature photography competition, recognizing aesthetic quality and conservation storytelling.</p>
+                    </div>
+
+                    <!-- Class 10 Topper -->
+                    <div class="glass-card award-card">
+                        <div class="award-header">
+                            <i class="fa-solid fa-medal award-bronze-icon"></i>
+                            <span class="award-year">2023</span>
+                        </div>
+                        <h3>Class-10 Topper (SEE)</h3>
+                        <h4 class="award-institution">Everest English Boarding School | Butwal</h4>
+                        <p>Recognized for outstanding academic achievement by placing first in the school cohort during the nationwide Secondary Education Examination (SEE).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="skills-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">My Toolbelt</span>
+                    <h2 class="section-title">Technical Skills</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="skills-layout-grid">
+                    <!-- Skills Group -->
+                    <div class="glass-card skill-group-card">
+                        <h3>Coding &amp; Frameworks</h3>
+                        <div class="tech-tags-list">
+                            <div class="tech-tag-item"><i class="fa-brands fa-python python-color"></i> Python</div>
+                            <div class="tech-tag-item"><i class="fa-brands fa-react react-color"></i> React / React Native</div>
+                            <div class="tech-tag-item"><i class="fa-brands fa-js js-color"></i> JavaScript (ES6+)</div>
+                            <div class="tech-tag-item"><i class="fa-brands fa-html5 html-color"></i> HTML5 &amp; CSS3</div>
+                            <div class="tech-tag-item"><i class="fa-solid fa-database db-color"></i> FastAPI &amp; SQL</div>
+                            <div class="tech-tag-item"><i class="fa-solid fa-cube blender-color"></i> 3D Modeling (Blender)</div>
+                        </div>
+                    </div>
+
+                    <!-- Languages -->
+                    <div class="glass-card skill-group-card">
+                        <h3>Languages</h3>
+                        <div class="languages-list">
+                            <div class="lang-item">
+                                <span class="lang-name">English</span>
+                                <span class="lang-level">Fluent (SAT 800)</span>
+                            </div>
+                            <div class="lang-item">
+                                <span class="lang-name">Nepali</span>
+                                <span class="lang-level">Native</span>
+                            </div>
+                            <div class="lang-item">
+                                <span class="lang-name">Hindi</span>
+                                <span class="lang-level">Fluent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Let's Chat</span>
+                    <h2 class="section-title">Say hello!</h2>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info-panel">
+                        <h3>Let's build something cool together</h3>
+                        <p>Whether you'd like to talk about SATitide, research projects, robotics, or just say hi, feel free to drop a message!</p>
+                        
+                        <div class="contact-methods">
+                            <a href="mailto:utsavbk9022@gmail.com" class="contact-card">
+                                <div class="contact-card-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div class="contact-card-text">
+                                    <span class="contact-card-title">Email</span>
+                                    <span class="contact-card-value">utsavbk9022@gmail.com</span>
+                                </div>
+                            </a>
+                            <div class="contact-card">
+                                <div class="contact-card-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="contact-card-text">
+                                    <span class="contact-card-title">Address</span>
+                                    <span class="contact-card-value">2400 6th St NW, Washington, DC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="social-links">
+                            <a href="https://github.com/90Utsav" target="_blank" class="social-link" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                            <a href="https://www.linkedin.com/in/utsav-b-k-513994298/" target="_blank" class="social-link" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="https://www.instagram.com/90_utsav/" target="_blank" class="social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="glass-card contact-form-wrapper">
+                        <form id="contact-form" class="contact-form" autocomplete="off">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" class="form-control" required placeholder=" ">
+                                <label for="name" class="form-label">Full Name</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" class="form-control" required placeholder=" ">
+                                <label for="email" class="form-label">Email Address</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="subject" name="subject" class="form-control" required placeholder=" ">
+                                <label for="subject" class="form-label">Subject</label>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="message" name="message" class="form-control" rows="5" required placeholder=" "></textarea>
+                                <label for="message" class="form-label">Message Details</label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full hover-effect" id="form-submit-btn">
+                                <span>Send Message</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                            
+                            <div class="form-feedback" id="form-feedback"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <p class="copyright">&copy; 2026 Utsav B K. All rights reserved.</p>
+            <p class="designed-with">Made with passion &amp; <span class="heart">&hearts;</span></p>
+        </div>
+    </footer>
+
+    <!-- Core Script -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -745,3 +745,456 @@ function initMathAvatarCanvas() {
         addSplash(centerGridX, centerGridY, 120, 4);
     });
 }
+
+/* ==========================================================================
+   DOWNFALL MINI GAME
+   ========================================================================== */
+function initDownfallGame() {
+    const startButton = document.getElementById('game-start');
+    const closeButton = document.getElementById('game-close');
+    const overlay = document.getElementById('game-overlay');
+    const canvas = document.getElementById('downfall-canvas');
+    const scoreElement = document.getElementById('game-score');
+
+    if (!startButton || !closeButton || !overlay || !canvas || !scoreElement) return;
+
+    const ctx = canvas.getContext('2d');
+    const keys = new Set();
+    let animationFrame;
+    let running = false;
+    let previousTime = 0;
+    let player;
+    let cameraY;
+    let hazards;
+    let stars;
+    let deepestEntity;
+    let collected;
+
+    function resizeCanvas() {
+        canvas.width = Math.max(320, Math.floor(canvas.clientWidth));
+        canvas.height = Math.max(340, Math.floor(canvas.clientHeight));
+    }
+
+    function addWorldSlice() {
+        const spacing = 155 + Math.random() * 115;
+        deepestEntity += spacing;
+        const hazardWidth = 44 + Math.random() * 68;
+        hazards.push({
+            x: 22 + Math.random() * (canvas.width - hazardWidth - 44),
+            y: deepestEntity,
+            width: hazardWidth,
+            height: 18
+        });
+
+        if (Math.random() > 0.28) {
+            stars.push({
+                x: 24 + Math.random() * (canvas.width - 48),
+                y: deepestEntity - 55 - Math.random() * 45,
+                collected: false
+            });
+        }
+    }
+
+    function resetGame() {
+        resizeCanvas();
+        player = { x: canvas.width / 2, y: 76, radius: 14, speed: 285 };
+        cameraY = 0;
+        collected = 0;
+        hazards = [];
+        stars = [];
+        deepestEntity = 160;
+
+        for (let i = 0; i < 38; i++) addWorldSlice();
+        scoreElement.textContent = '0m';
+    }
+
+    function intersectsHazard(hazard) {
+        return player.x + player.radius > hazard.x &&
+            player.x - player.radius < hazard.x + hazard.width &&
+            player.y + player.radius > hazard.y &&
+            player.y - player.radius < hazard.y + hazard.height;
+    }
+
+    function update(delta) {
+        let direction = 0;
+        if (keys.has('arrowleft') || keys.has('a')) direction -= 1;
+        if (keys.has('arrowright') || keys.has('d')) direction += 1;
+
+        player.x += direction * player.speed * delta;
+        player.x = Math.max(player.radius + 10, Math.min(canvas.width - player.radius - 10, player.x));
+        player.y += (118 + Math.min(player.y / 48, 125)) * delta;
+
+        const targetCameraY = Math.max(0, player.y - canvas.height * 0.55);
+        cameraY += (targetCameraY - cameraY) * Math.min(1, delta * 5);
+
+        stars.forEach(star => {
+            if (!star.collected && Math.hypot(player.x - star.x, player.y - star.y) < player.radius + 12) {
+                star.collected = true;
+                collected += 1;
+            }
+        });
+
+        if (hazards.some(intersectsHazard)) {
+            player.y = Math.max(cameraY + 75, player.y - 110);
+            player.x = canvas.width / 2;
+        }
+
+        while (deepestEntity < player.y + canvas.height * 2) addWorldSlice();
+        hazards = hazards.filter(hazard => hazard.y > cameraY - 100);
+        stars = stars.filter(star => star.y > cameraY - 100 && !star.collected);
+        scoreElement.textContent = `${Math.floor(player.y / 10) + collected * 25}m`;
+    }
+
+    function drawStar(x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.fillStyle = '#f2cc8f';
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = '#f2cc8f';
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+            const radius = i % 2 === 0 ? 10 : 4.5;
+            const angle = -Math.PI / 2 + i * Math.PI / 5;
+            const pointX = Math.cos(angle) * radius;
+            const pointY = Math.sin(angle) * radius;
+            i === 0 ? ctx.moveTo(pointX, pointY) : ctx.lineTo(pointX, pointY);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function draw() {
+        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e07a5f';
+        const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim() || '#f2cc8f';
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#08111f');
+        gradient.addColorStop(1, '#13233a');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.translate(0, -cameraY);
+
+        for (let y = Math.floor(cameraY / 90) * 90; y < cameraY + canvas.height + 90; y += 90) {
+            ctx.strokeStyle = 'rgba(152, 193, 217, 0.09)';
+            ctx.setLineDash([5, 13]);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        hazards.forEach(hazard => {
+            ctx.fillStyle = '#e66b6b';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#e66b6b';
+            ctx.fillRect(hazard.x, hazard.y, hazard.width, hazard.height);
+            ctx.shadowBlur = 0;
+        });
+
+        stars.forEach(star => drawStar(star.x, star.y));
+
+        ctx.fillStyle = activeColor;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = activeColor;
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#0a0f18';
+        ctx.beginPath();
+        ctx.arc(player.x - 5, player.y - 2, 2, 0, Math.PI * 2);
+        ctx.arc(player.x + 5, player.y - 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+        ctx.fillStyle = secondaryColor;
+        ctx.font = '600 12px Inter, sans-serif';
+        ctx.fillText('KEEP FALLING ↓', 18, 26);
+    }
+
+    function loop(timestamp) {
+        if (!running) return;
+        const delta = Math.min((timestamp - previousTime) / 1000, 0.05);
+        previousTime = timestamp;
+        update(delta);
+        draw();
+        animationFrame = requestAnimationFrame(loop);
+    }
+
+    function openGame() {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        resetGame();
+        running = true;
+        previousTime = performance.now();
+        animationFrame = requestAnimationFrame(loop);
+    }
+
+    function closeGame() {
+        running = false;
+        cancelAnimationFrame(animationFrame);
+        keys.clear();
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    startButton.addEventListener('click', openGame);
+    closeButton.addEventListener('click', closeGame);
+    overlay.addEventListener('click', event => {
+        if (event.target === overlay) closeGame();
+    });
+
+    window.addEventListener('keydown', event => {
+        if (!running) return;
+        if (event.key === 'Escape') {
+            closeGame();
+            return;
+        }
+        if (['ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D'].includes(event.key)) {
+            event.preventDefault();
+            keys.add(event.key.toLowerCase());
+        }
+    });
+
+    window.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
+    window.addEventListener('resize', () => {
+        if (running) resetGame();
+    });
+}
+
+/* ===========================================================================
+   IN-PAGE PORTFOLIO EXPLORER
+   =========================================================================== */
+function initPortfolioExplorerGame() {
+    const startButton = document.getElementById('game-start');
+    const closeButton = document.getElementById('game-close');
+    const overlay = document.getElementById('game-overlay');
+    const canvas = document.getElementById('downfall-canvas');
+    const scoreElement = document.getElementById('game-score');
+
+    if (!startButton || !closeButton || !overlay || !canvas || !scoreElement) return;
+
+    const ctx = canvas.getContext('2d');
+    const keys = new Set();
+    let active = false;
+    let animationFrame;
+    let previousTime = 0;
+    let player;
+    let platforms = [];
+    let stars = [];
+    let nextPlatformY = 0;
+    let lastPlatform;
+    let starsCollected = 0;
+    let dropTimer = 0;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    function addPlatform() {
+        const width = 125 + Math.random() * 55;
+        const verticalGap = 125 + Math.random() * 30;
+        const previousCenter = lastPlatform ? lastPlatform.x + lastPlatform.width / 2 : canvas.width / 2;
+        const horizontalStep = (Math.random() - 0.5) * 155;
+        const center = Math.max(width / 2 + 18, Math.min(canvas.width - width / 2 - 18, previousCenter + horizontalStep));
+
+        nextPlatformY += verticalGap;
+        const platform = {
+            x: center - width / 2,
+            y: nextPlatformY,
+            width
+        };
+        platforms.push(platform);
+        lastPlatform = platform;
+
+        if (Math.random() > 0.2) {
+            stars.push({ x: platform.x + platform.width / 2, y: platform.y - 31 });
+        }
+    }
+
+    function resetGame() {
+        resizeCanvas();
+        player = {
+            x: canvas.width / 2,
+            y: 140,
+            width: 23,
+            height: 23,
+            vx: 0,
+            vy: 0,
+            grounded: true
+        };
+        platforms = [{ x: canvas.width / 2 - 85, y: 165, width: 170 }];
+        lastPlatform = platforms[0];
+        stars = [];
+        nextPlatformY = 165;
+        starsCollected = 0;
+        dropTimer = 0;
+        while (nextPlatformY < canvas.height + 180) addPlatform();
+        scoreElement.textContent = '0';
+    }
+
+    function scrollWithPlayer() {
+        const triggerY = canvas.height * 0.68;
+        if (player.y < triggerY) return;
+
+        // Limit the camera advance per frame so the real page scroll stays smooth.
+        const requestedScroll = Math.min(player.y - canvas.height * 0.56, 6);
+        const beforeScroll = window.scrollY;
+        document.documentElement.scrollTop = beforeScroll + requestedScroll;
+        const actualScroll = window.scrollY - beforeScroll;
+
+        if (actualScroll > 0) {
+            player.y -= actualScroll;
+            platforms.forEach(platform => { platform.y -= actualScroll; });
+            stars.forEach(star => { star.y -= actualScroll; });
+            nextPlatformY -= actualScroll;
+        }
+    }
+
+    function update(delta) {
+        const movingLeft = keys.has('arrowleft') || keys.has('a');
+        const movingRight = keys.has('arrowright') || keys.has('d');
+        const direction = Number(movingRight) - Number(movingLeft);
+        const previousBottom = player.y + player.height / 2;
+
+        player.vx += (direction * 220 - player.vx) * Math.min(1, delta * 8);
+        player.x += player.vx * delta;
+        player.x = Math.max(player.width / 2 + 10, Math.min(canvas.width - player.width / 2 - 10, player.x));
+
+        dropTimer = Math.max(0, dropTimer - delta);
+        player.vy = Math.min(player.vy + 720 * delta, 260);
+        player.y += player.vy * delta;
+        player.grounded = false;
+
+        if (dropTimer === 0 && player.vy >= 0) {
+            for (const platform of platforms) {
+                const playerLeft = player.x - player.width / 2;
+                const playerRight = player.x + player.width / 2;
+                const currentBottom = player.y + player.height / 2;
+                const overlapsPlatform = playerRight > platform.x && playerLeft < platform.x + platform.width;
+
+                if (overlapsPlatform && previousBottom <= platform.y && currentBottom >= platform.y) {
+                    player.y = platform.y - player.height / 2;
+                    player.vy = 0;
+                    player.grounded = true;
+                    break;
+                }
+            }
+        }
+
+        stars = stars.filter(star => {
+            if (Math.hypot(player.x - star.x, player.y - star.y) < 25) {
+                starsCollected += 1;
+                scoreElement.textContent = String(starsCollected);
+                return false;
+            }
+            return star.y > -50;
+        });
+
+        scrollWithPlayer();
+        while (nextPlatformY < canvas.height + 180) addPlatform();
+        platforms = platforms.filter(platform => platform.y > -45);
+    }
+
+    function drawStar(x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.fillStyle = '#f2cc8f';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#f2cc8f';
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+            const radius = i % 2 === 0 ? 10 : 4;
+            const angle = -Math.PI / 2 + i * Math.PI / 5;
+            const pointX = Math.cos(angle) * radius;
+            const pointY = Math.sin(angle) * radius;
+            i === 0 ? ctx.moveTo(pointX, pointY) : ctx.lineTo(pointX, pointY);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function draw() {
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e07a5f';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        platforms.forEach(platform => {
+            ctx.fillStyle = 'rgba(129, 178, 154, 0.22)';
+            ctx.strokeStyle = 'rgba(129, 178, 154, 0.85)';
+            ctx.lineWidth = 2;
+            ctx.fillRect(platform.x, platform.y, platform.width, 11);
+            ctx.strokeRect(platform.x, platform.y, platform.width, 11);
+        });
+        stars.forEach(star => drawStar(star.x, star.y));
+
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = accent;
+        ctx.fillStyle = accent;
+        ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#0a0f18';
+        ctx.fillRect(player.x - 6, player.y - 3, 3, 3);
+        ctx.fillRect(player.x + 3, player.y - 3, 3, 3);
+    }
+
+    function loop(timestamp) {
+        if (!active) return;
+        const delta = Math.min((timestamp - previousTime) / 1000, 0.035);
+        previousTime = timestamp;
+        update(delta);
+        draw();
+        animationFrame = requestAnimationFrame(loop);
+    }
+
+    function startGame() {
+        resetGame();
+        active = true;
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        previousTime = performance.now();
+        animationFrame = requestAnimationFrame(loop);
+    }
+
+    function stopGame() {
+        active = false;
+        cancelAnimationFrame(animationFrame);
+        keys.clear();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    startButton.addEventListener('click', startGame);
+    closeButton.addEventListener('click', stopGame);
+    window.addEventListener('keydown', event => {
+        if (!active) return;
+        const key = event.key.toLowerCase();
+        if (key === 'escape') {
+            stopGame();
+            return;
+        }
+        if (['arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'a', 'd', 'w', 's', ' '].includes(key)) {
+            event.preventDefault();
+            keys.add(key);
+            if ((key === 'arrowdown' || key === 's') && player.grounded) {
+                dropTimer = 0.24;
+                player.vy = 95;
+            }
+            if ((key === 'arrowup' || key === 'w' || key === ' ') && player.grounded) {
+                player.vy = -285;
+                player.grounded = false;
+            }
+        }
+    });
+    window.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
+    window.addEventListener('resize', () => {
+        if (active) resetGame();
+    });
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery | Utsav BK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gallery-page">
+    <main class="gallery-page-main">
+        <a href="index.html#gallery" class="gallery-back">&larr; Back to portfolio</a>
+        <div class="gallery-page-heading">
+            <span class="section-tag">Photo collection</span>
+            <h1 id="gallery-page-title">Gallery</h1>
+            <p id="gallery-page-description">A few frames from the journey.</p>
+        </div>
+        <div class="gallery-page-grid" id="gallery-page-grid"></div>
+    </main>
+
+    <script>
+        const collections = {
+            dc: {
+                title: 'Washington, DC',
+                description: 'City walks, landmarks, and the place where my next chapter began.',
+                files: ['dc-1.jpg', 'dc-2.jpg', 'dc-3.jpg', 'dc-4.jpg', 'dc-5.jpg', 'dc-6.jpg', 'dc-7.jpg', 'dc-8.jpg', 'dc-9.jpg', 'dc-10.jpg']
+            },
+            howard: {
+                title: 'Howard University',
+                description: 'Campus life, new routines, and the people I am learning alongside.',
+                files: ['howard-1.jpg', 'howard-2.jpg', 'howard-3.jpg']
+            },
+            highschool: {
+                title: 'High school memories',
+                description: 'Budhanilkantha School, Nepal, and the years that shaped me.',
+                files: ['highschool-1.jpg', 'highschool-2.jpg', 'highschool-3.jpg']
+            },
+            random: {
+                title: 'Random favorites',
+                description: 'Small moments that deserve a place in the archive.',
+                files: ['random-1.jpg', 'random-2.jpg', 'random-3.jpg']
+            }
+        };
+
+        const category = new URLSearchParams(window.location.search).get('category');
+        const collection = collections[category] || collections.dc;
+        const title = document.getElementById('gallery-page-title');
+        const description = document.getElementById('gallery-page-description');
+        const grid = document.getElementById('gallery-page-grid');
+
+        document.title = `${collection.title} | Utsav BK`;
+        title.textContent = collection.title;
+        description.textContent = collection.description;
+
+        collection.files.forEach((file, index) => {
+            const figure = document.createElement('figure');
+            figure.className = 'gallery-page-item';
+            figure.innerHTML = `
+                <img src="assets/gallery/${file}" alt="${collection.title} photo ${index + 1}" loading="lazy">
+                <span class="gallery-page-placeholder">Add ${file}</span>
+                <figcaption>${String(index + 1).padStart(2, '0')}</figcaption>
+            `;
+            figure.querySelector('img').addEventListener('error', event => {
+                event.currentTarget.hidden = true;
+                figure.classList.add('missing');
+            });
+            grid.appendChild(figure);
+        });
+    </script>
+</body>
+</html>

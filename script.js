@@ -17,7 +17,64 @@ document.addEventListener('DOMContentLoaded', () => {
     initAvatarEasterEgg();
     initInteractiveCanvas();
     initMathAvatarCanvas();
+    initPhotoGallery();
 });
+
+/* ===========================================================================
+   PERSONAL PHOTO GALLERY
+   =========================================================================== */
+function initPhotoGallery() {
+    const galleryCards = document.querySelectorAll('.gallery-card');
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const closeButton = document.getElementById('lightbox-close');
+
+    if (!galleryCards.length || !lightbox || !lightboxImage || !lightboxTitle || !closeButton) return;
+
+    document.querySelectorAll('.gallery-media img').forEach(image => {
+        image.addEventListener('load', () => image.parentElement.classList.add('has-image'));
+    });
+
+    function closeLightbox() {
+        lightbox.hidden = true;
+        lightboxImage.src = '';
+        document.body.style.overflow = '';
+    }
+
+    galleryCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const galleryGroup = card.closest('.gallery-group');
+            const isCoverPhoto = galleryGroup && card === galleryGroup.querySelector('.gallery-card');
+
+            if (isCoverPhoto && !galleryGroup.classList.contains('is-open')) {
+                const category = card.dataset.galleryCategory;
+                if (category) window.location.href = `gallery.html?category=${category}`;
+                return;
+            }
+
+            const imagePath = card.dataset.galleryImage;
+            const title = card.dataset.galleryTitle;
+
+            if (!imagePath || !card.querySelector('.gallery-media.has-image')) return;
+
+            lightboxImage.src = imagePath;
+            lightboxImage.alt = title;
+            lightboxTitle.textContent = title;
+            lightbox.hidden = false;
+            document.body.style.overflow = 'hidden';
+            closeButton.focus();
+        });
+    });
+
+    closeButton.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', event => {
+        if (event.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
+    });
+}
 
 /* ==========================================================================
    CUSTOM CURSOR
@@ -288,7 +345,7 @@ function initContactForm() {
     
     if (!form || !feedback || !submitBtn) return;
     
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // Verify values
@@ -308,14 +365,28 @@ function initContactForm() {
         submitBtn.innerHTML = `<span>Sending...</span> <i class="fa-solid fa-spinner fa-spin"></i>`;
         feedback.style.display = 'none';
         
-        // Simulate API post call
-        setTimeout(() => {
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    Accept: 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Form submission failed');
+            }
+
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnContent;
-            
             showFeedback('Message sent successfully! Thank you.', 'success');
             form.reset();
-        }, 1800);
+        } catch (error) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnContent;
+            showFeedback('Unable to send your message right now. Please email me directly.', 'error');
+        }
     });
     
     function showFeedback(text, type) {
@@ -572,10 +643,16 @@ function initMathAvatarCanvas() {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
+    const displayWidth = canvas.clientWidth || 360;
+    const displayHeight = canvas.clientHeight || 430;
+    const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(displayWidth * devicePixelRatio);
+    canvas.height = Math.floor(displayHeight * devicePixelRatio);
+    ctx.scale(devicePixelRatio, devicePixelRatio);
     
     // ASCII/Math matrix resolution
-    const cols = 64;
-    const rows = 76;
+    const cols = 96;
+    const rows = 127;
     
     const mathSymbols = [" ", "·", "≈", "√", "θ", "π", "λ", "Σ", "∫", "∞", "█"];
     
@@ -667,12 +744,12 @@ function initMathAvatarCanvas() {
         // Propagate simulated physical wave ripple
         propagateWave();
         
-        ctx.font = '8px "Courier New", monospace';
+        ctx.font = `${Math.max(5, Math.min(8, (displayWidth / cols) * 1.45))}px "Courier New", monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        const cellW = canvas.width / cols;
-        const cellH = canvas.height / rows;
+        const cellW = displayWidth / cols;
+        const cellH = displayHeight / rows;
         
         const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e07a5f';
         

@@ -5,7 +5,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initCustomCursor();
     initTypewriter();
     initThemeToggler();
     initMobileMenu();
@@ -73,65 +72,6 @@ function initPhotoGallery() {
     });
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
-    });
-}
-
-/* ==========================================================================
-   CUSTOM CURSOR
-   ========================================================================== */
-function initCustomCursor() {
-    const cursor = document.getElementById('custom-cursor');
-    const cursorDot = document.getElementById('custom-cursor-dot');
-    
-    // Check if the device has a mouse/fine pointer
-    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
-    
-    if (!hasFinePointer) {
-        if (cursor) cursor.style.display = 'none';
-        if (cursorDot) cursorDot.style.display = 'none';
-        return;
-    }
-    
-    // Track mouse coordinates
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-    
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        // Show cursor elements once first movement occurs
-        cursor.style.opacity = '1';
-        cursorDot.style.opacity = '1';
-        
-        // Dot follows cursor immediately
-        cursorDot.style.left = `${mouseX}px`;
-        cursorDot.style.top = `${mouseY}px`;
-    });
-    
-    // Smooth lerp (linear interpolation) loop for the outer cursor ring
-    function renderCursor() {
-        // Calculate smooth movement
-        const lerpFactor = 0.15; // Adjust for speed of following
-        cursorX += (mouseX - cursorX) * lerpFactor;
-        cursorY += (mouseY - cursorY) * lerpFactor;
-        
-        cursor.style.left = `${cursorX}px`;
-        cursor.style.top = `${cursorY}px`;
-        
-        requestAnimationFrame(renderCursor);
-    }
-    renderCursor();
-    
-    // Hover interactions
-    const interactiveElements = document.querySelectorAll('a, button, input, textarea, .filter-btn, .timeline-dot');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.classList.add('hover');
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.classList.remove('hover');
-        });
     });
 }
 
@@ -434,14 +374,6 @@ function initAccentPicker() {
             localStorage.setItem('accent-color', accent);
             localStorage.setItem('accent-glow', glow);
             
-            // Swell custom cursor feedback
-            const cursor = document.getElementById('custom-cursor');
-            if (cursor) {
-                cursor.style.transform = 'translate(-50%, -50%) scale(1.8)';
-                setTimeout(() => {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                }, 250);
-            }
         });
     });
 }

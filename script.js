@@ -31,9 +31,19 @@ function initPhotoGallery() {
 
     if (!galleryCards.length || !lightbox || !lightboxImage || !lightboxTitle || !closeButton) return;
 
-    document.querySelectorAll('.gallery-media img').forEach(image => {
-        image.addEventListener('load', () => image.parentElement.classList.add('has-image'));
-    });
+    const markGalleryImageLoaded = (image) => {
+        const media = image.parentElement;
+        if (!media) return;
+
+        if (image.complete && image.naturalWidth > 0) {
+            media.classList.add('has-image');
+        }
+
+        image.addEventListener('load', () => media.classList.add('has-image'));
+        image.addEventListener('error', () => media.classList.remove('has-image'));
+    };
+
+    document.querySelectorAll('.gallery-media img').forEach(markGalleryImageLoaded);
 
     function closeLightbox() {
         lightbox.hidden = true;
@@ -597,6 +607,7 @@ function initMathAvatarCanvas() {
     // Image loading & brightness mapping
     const img = new Image();
     let brightness = [];
+    let alpha = [];
     let isLoaded = false;
     
     img.onload = () => {
@@ -612,13 +623,16 @@ function initMathAvatarCanvas() {
         
         for (let y = 0; y < rows; y++) {
             brightness[y] = [];
+            alpha[y] = [];
             for (let x = 0; x < cols; x++) {
                 const idx = (y * cols + x) * 4;
                 const r = imgData[idx];
                 const g = imgData[idx + 1];
                 const b = imgData[idx + 2];
+                const a = imgData[idx + 3];
                 // Luminosity formula
                 brightness[y][x] = 0.299 * r + 0.587 * g + 0.114 * b;
+                alpha[y][x] = a;
             }
         }
         
@@ -687,6 +701,9 @@ function initMathAvatarCanvas() {
         
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
+                // Skip transparent pixels (background removed) to create body silhouette
+                if (alpha[y][x] < 30) continue;
+                
                 const luma = brightness[y][x];
                 const symIdx = Math.floor((luma / 255) * (mathSymbols.length - 1));
                 const symbol = mathSymbols[symIdx];
@@ -718,8 +735,10 @@ function initMathAvatarCanvas() {
                 }
                 
                 // Apply slight opacity variance for realistic contrast depth
+                // Factor in the alpha channel for smooth feathered silhouette edges
+                const alphaFactor = alpha[y][x] / 255;
                 ctx.fillStyle = activeColor;
-                ctx.globalAlpha = (luma / 255) * 0.82 + 0.18;
+                ctx.globalAlpha = ((luma / 255) * 0.82 + 0.18) * alphaFactor;
                 
                 ctx.fillText(symbol, screenX + shiftX + repelX, screenY + shiftY + repelY);
             }

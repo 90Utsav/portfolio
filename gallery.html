@@ -40,7 +40,15 @@
             random: {
                 title: 'Random favorites',
                 description: 'Small moments that deserve a place in the archive.',
-                files: ['random-1.jpg', 'random-2.jpg', 'random-3.jpg']
+                files: [
+                    'tennis/IMG_3210.JPG',
+                    'tennis/IMG_3212.JPG',
+                    'tennis/IMG_3213.JPG',
+                    'tennis/IMG_3214.JPG',
+                    'tennis/IMG_3230.JPG',
+                    'tennis/IMG_3232.JPG',
+                    'tennis/IMG_3233.JPG'
+                ]
             }
         };
 
@@ -57,8 +65,9 @@
         collection.files.forEach((file, index) => {
             const figure = document.createElement('figure');
             figure.className = 'gallery-page-item';
+            const imageSrc = file.startsWith('tennis/') ? file : `assets/gallery/${file}`;
             figure.innerHTML = `
-                <img src="assets/gallery/${file}" alt="${collection.title} photo ${index + 1}" loading="lazy">
+                <img src="${imageSrc}" alt="${collection.title} photo ${index + 1}" loading="lazy">
                 <span class="gallery-page-placeholder">Add ${file}</span>
                 <figcaption>${String(index + 1).padStart(2, '0')}</figcaption>
             `;
